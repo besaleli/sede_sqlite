@@ -1,0 +1,3 @@
+[submodule "sede"]
+	path = sede
+	url = https://github.com/hirupert/sede.git
