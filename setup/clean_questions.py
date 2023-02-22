@@ -38,7 +38,18 @@ def transpile(query):
     
     raise Exception('asdf')
 
-            
+def parse_sql(query) -> sqlglot.Expression:
+    transpiled_sql = None
+    for dialect in dialects:
+        try:
+            transpiled_sql = sqlglot.parse_one(query, read=dialect)
+        except Exception:
+            continue
+        
+        if transpiled_sql:
+            return transpiled_sql
+        
+    raise Exception('asdf')
 
 def clean(questions: Iterable):
     cleaned_queries = []
@@ -48,7 +59,7 @@ def clean(questions: Iterable):
     for d in tqdm(questions):
         try:
             # attempt to parse
-            parse = sqlglot.parse_one(d['QueryBody'], read='tsql')
+            parse = parse_sql(d['QueryBody'])
             tables = [i.name for i in parse.find_all(sqlglot.exp.Table)]
             # make sure that all tables in query exist
             if all(t.lower() in table_names for t in tables):
